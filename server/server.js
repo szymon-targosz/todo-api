@@ -62,8 +62,8 @@ app.delete('/todos/:id', (req, res) => {
     }
 
     Todo.findByIdAndDelete(id)
-        .then(todo => { // zwraca usuniete todo
-            if (!todo) {  // jesli nic nie usunie to zwroci null (czyli nie ma tam todo o tym id bo nie usunelo)
+        .then(todo => { 
+            if (!todo) { 
                 return res.status(404).send();
             }
 
