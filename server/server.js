@@ -6,7 +6,7 @@ const { User } = require('./models/user');
 const { Todo } = require('./models/todo');
 
 const app = express();
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3013;
 
 app.use(bodyParser.json());
 
@@ -54,6 +54,25 @@ app.get('/todos/:id', (req, res) => {
         });
 });
 
+app.delete('/todos/:id', (req, res) => {
+    const id = req.params.id;
+
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    Todo.findByIdAndDelete(id)
+        .then(todo => { // zwraca usuniete todo
+            if (!todo) {  // jesli nic nie usunie to zwroci null (czyli nie ma tam todo o tym id bo nie usunelo)
+                return res.status(404).send();
+            }
+
+            res.send({ todo });
+        })
+        .catch(err => {
+            res.send(400).send();
+        });
+});
 
 app.listen(port, () => {
     console.log(`Started up at port ${port}.`);
