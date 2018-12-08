@@ -4,7 +4,15 @@ const expect = require('expect');
 const { Todo } = require('../models/todo');
 const { app } = require('../server');
 
-const todos = [{ _id: new ObjectID(), text: 'First test todo' }, { _id: new ObjectID(), text: 'Second test todo' }];
+const todos = [{
+    _id: new ObjectID(),
+    text: 'First test todo'
+}, {
+    _id: new ObjectID(),
+    text: 'Second test todo',
+    completed: true,
+    completedAt: 333
+}];
 
 beforeEach((done) => {
     Todo.deleteMany({})
@@ -22,18 +30,18 @@ describe('POST /todos', () => {
 
         request(app)
             .post('/todos')
-            .send({ text }) 
+            .send({ text })
             .expect(200)
             .expect(res => {
                 expect(res.body.text).toBe(text);
             })
             .end((err, res) => {
-                
+
                 if (err) {
-                    return done(err); 
+                    return done(err);
                 }
 
-                
+
                 Todo.find({ text })
                     .then(todos => {
                         expect(todos.length).toBe(1);
@@ -86,7 +94,7 @@ describe('GET /todos/:id', () => {
 
     it('should return todo doc', done => {
         request(app)
-            .get(`/todos/${todos[0]._id.toHexString()}`) 
+            .get(`/todos/${todos[0]._id.toHexString()}`)
             .expect(200)
             .expect(res => {
                 expect(res.body.todo.text).toBe(todos[0].text);
@@ -96,7 +104,7 @@ describe('GET /todos/:id', () => {
 
     it('should return 404 if todo not found', done => {
         request(app)
-            .get(`/todos/${new ObjectID().toHexString()}`) 
+            .get(`/todos/${new ObjectID().toHexString()}`)
             .expect(404)
             .expect((res) => {
                 expect(res.body.todo).toNotExist();
@@ -108,7 +116,7 @@ describe('GET /todos/:id', () => {
         request(app)
             .get('/todos/invalidID')
             .expect(404)
-            .expect((res) => { 
+            .expect((res) => {
                 expect(res.body.todo).toNotExist();
             })
             .end(done);
@@ -134,7 +142,7 @@ describe('DELETE /todos/:id', () => {
 
                 Todo.findById(hexId)
                     .then(todo => {
-                        expect(todo).toNotExist(); 
+                        expect(todo).toNotExist();
                         done();
                     })
                     .catch(err => done(err));
@@ -157,6 +165,43 @@ describe('DELETE /todos/:id', () => {
             .expect(404)
             .expect(res => {
                 expect(res.body.todo).toNotExist();
+            })
+            .end(done);
+    });
+
+});
+
+
+describe('PATCH /tods/:id', () => {
+
+    it('should update the todo', done => {
+        const hexId = todos[0]._id.toHexString();
+        const text = 'This should be the new text';
+
+        request(app)
+            .patch(`/todos/${hexId}`)
+            .send({ completed: true, text })
+            .expect(200)
+            .expect(res => {
+                expect(res.body.todo.completed).toBe(true);
+                expect(res.body.todo.completedAt).toBeA('number');
+                expect(res.body.todo.text).toBe(text);
+            })
+            .end(done);
+    });
+
+    it('should clear completedAt when todo is not completed', done => {
+        const hexId = todos[1]._id.toHexString();
+        const text = 'New text';
+
+        request(app)
+            .patch(`/todos/${hexId}`)
+            .send({ completed: false, text })
+            .expect(200)
+            .expect(res => {
+                expect(res.body.todo.completed).toBe(false);
+                expect(res.body.todo.completedAt).toNotExist();
+                expect(res.body.todo.text).toBe(text);
             })
             .end(done);
     });
