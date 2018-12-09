@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "run:prod": "NODE_ENV=production node server/server.js",
     "start": "node server/server.js",
-    "test": "mocha server/**/*.test.js",
+    "test": "cross-env NODE_ENV=test mocha server/**/*.test.js",
     "test-watch": "nodemon --exec \"npm test\""
   },
   "engine": {
@@ -16,7 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "1.18.3",
-    "dotenv": "6.2.0",
+    "cross-env": "^5.2.0",
     "express": "4.16.4",
     "lodash": "4.17.11",
     "mongodb": "3.1.10",
