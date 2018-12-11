@@ -224,13 +224,13 @@ describe('GET /users/me', () => {
 
 });
 
-describe('POST /users', () => {
+describe('POST /users/signup', () => {
     const email = 'alina@test.com';
     const password = 'testpassword!';
 
     it('should create a user', done => {
         request(app)
-            .post('/users')
+            .post('/users/signup')
             .send({ email, password })
             .expect(200)
             .expect(res => {
@@ -257,7 +257,7 @@ describe('POST /users', () => {
 
     it('should return validation error if request is invalid', done => {
         request(app)
-            .post('/users')
+            .post('/users/signup')
             .send({ email: 'mas', password: '123'})
             .expect(400)
             .end(done);
@@ -265,7 +265,7 @@ describe('POST /users', () => {
 
     it('should not create user if email in use', done => {
         request(app)
-            .post('/users')
+            .post('/users/signup')
             .send({ email: users[0].email, password: '1234567' })
             .expect(400)
             .end(done);
