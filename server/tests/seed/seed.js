@@ -7,7 +7,7 @@ const userOneId = new ObjectID();
 const userTwoId = new ObjectID();
 
 const users = [{
-    _id: userOneId,
+    _id: userOneId,    
     email: 'andrew@test.com',
     password: 'userOnePass',
     tokens: [{
@@ -17,14 +17,20 @@ const users = [{
 }, {
     _id: userTwoId,
     email: 'masha@test.com',
-    password: 'userTwoPass'
+    password: 'userTwoPass',
+    tokens: [{
+        access: 'auth',
+        token: jwt.sign({ _id: userTwoId.toHexString(), access: 'auth' }, 'abc123').toString()
+    }]
 }];
 
 const todos = [{
     _id: new ObjectID(),
-    text: 'First test todo'
+    text: 'First test todo',
+    _creator: userOneId
 }, {
     _id: new ObjectID(),
+    _creator: userTwoId,
     text: 'Second test todo',
     completed: true,
     completedAt: 333
