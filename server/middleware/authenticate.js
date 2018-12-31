@@ -8,14 +8,13 @@ const authenticate = (req, res, next) => {
             if (!user) {
                 return Promise.reject();
             }
-
             req.user = user;
             req.token = token;
             next();
         })
         .catch(err => {
             res.status(401).send();
-        })
+        });
 };
 
 module.exports = { authenticate };

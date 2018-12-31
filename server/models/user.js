@@ -56,7 +56,7 @@ UserSchema.methods.removeToken = function (token) {
         $pull: {
             tokens: { token }
         }
-    })
+    });
 };
 
 UserSchema.statics.findByToken = function (token) {
@@ -68,7 +68,7 @@ UserSchema.statics.findByToken = function (token) {
     } catch (err) {
         return Promise.reject();
     }
-
+    
     return User.findOne({
         _id: decoded._id,
         'tokens.token': token,
